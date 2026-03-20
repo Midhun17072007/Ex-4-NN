@@ -117,59 +117,47 @@ Normalize our dataset.
 
 ## Program:
 ```
-import pandas as pd
-import sklearn
-from sklearn import preprocessing
+from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report
 
-irisdata = pd.read_csv("Iris_data.csv")
-irisdata.head()
+iris = load_iris()
+X = iris.data      
+y = iris.target     
 
-irisdata = irisdata.dropna()
-print(irisdata)
-
-X = irisdata.iloc[:, 0:4]
-y = irisdata.select_dtypes(include=[object])
-print(X.head())
-print(y.head())
-
-le = preprocessing.LabelEncoder()
-y = y.apply(le.fit_transform)
-y.head()
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)
-print(X_train.shape)
-print(y_train.shape)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
 scaler = StandardScaler()
-scaler.fit(X_train)
-X_train = scaler.transform(X_train)
+X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
-print(X_train)
-print(y_train)
-mlp = MLPClassifier(hidden_layer_sizes=(10, 10, 10), max_iter=1000)
 
-mlp.fit(X_train, y_train.values.ravel())
-predictions = mlp.predict(X_test)
-print(predictions)
+mlp = MLPClassifier(
+    hidden_layer_sizes=(10, 10),
+    max_iter=1000,
+    random_state=42
+)
 
-print(confusion_matrix(y_test,predictions))
-print(classification_report(y_test,predictions))
+mlp.fit(X_train, y_train)
+
+y_pred = mlp.predict(X_test)
+
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+print("\nClassification Report:\n")
+print(classification_report(
+    y_test,
+    y_pred,
+    target_names=iris.target_names  
+))
 ```
 
 ## Output:
-<img width="1445" height="532" alt="image" src="https://github.com/user-attachments/assets/d7a566f4-8768-4540-9bef-45335bdad3c8" />
-
-<img width="1558" height="720" alt="image" src="https://github.com/user-attachments/assets/8dab4d53-40fa-43ce-bda3-05cfe85dbb45" />
-
-<img width="1216" height="540" alt="image" src="https://github.com/user-attachments/assets/fb9c7ed1-415e-4052-ba70-853023aee5cb" />
-
-<img width="1602" height="157" alt="image" src="https://github.com/user-attachments/assets/664b691a-e7a2-4aa3-8d19-40b3da07738b" />
-
-<img width="1632" height="376" alt="image" src="https://github.com/user-attachments/assets/2431249b-d680-4ec4-aac3-9448687aca87" />
+<img width="567" height="286" alt="image" src="https://github.com/user-attachments/assets/074fc5a8-47e7-4c80-8fba-db50de3edc76" />
+/>
 
 ## Result:
 Thus, MLP is implemented for multi-classification using python.
